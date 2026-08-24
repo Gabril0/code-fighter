@@ -1,0 +1,16 @@
+leaderboard/node_modules/
+leaderboard/dist/
+.DS_Store
+server/target/
+.playwright-mcp/
+
+server/data/
+*.db
+*.db-wal
+*.db-shm
+
+*.zip
+seed.json
+state.json
+state.json.imported
+*.b64
