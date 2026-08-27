@@ -1,0 +1,12 @@
+{
+  "INV001": {
+    "total_integralizado": 45000.0,
+    "total_recebido": 45921.86,
+    "resultado": 921.86
+  },
+  "INV002": {
+    "total_integralizado": 30000.0,
+    "total_recebido": 30658.53,
+    "resultado": 658.53
+  }
+}

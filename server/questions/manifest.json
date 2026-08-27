@@ -1,0 +1,43 @@
+[
+  {
+    "id": "q1",
+    "dir": "Q1-patrimonio-liquido",
+    "title": "Patrimônio Líquido",
+    "difficulty": "aquecimento",
+    "points": 100,
+    "mode": "numeric"
+  },
+  {
+    "id": "q2",
+    "dir": "Q2-rentabilidade-cota",
+    "title": "Rentabilidade da Cota",
+    "difficulty": "fácil",
+    "points": 100,
+    "mode": "numeric"
+  },
+  {
+    "id": "q3",
+    "dir": "Q3-ordem-liquidacao",
+    "title": "Ordem de Liquidação",
+    "difficulty": "intermediária",
+    "points": 100,
+    "mode": "exact"
+  },
+  {
+    "id": "q4",
+    "dir": "Q4-fechamento-fundo",
+    "title": "Fechamento do Fundo",
+    "difficulty": "intermediária+",
+    "points": 100,
+    "mode": "json"
+  },
+  {
+    "id": "q5",
+    "dir": "Q5-api-contas",
+    "title": "API de Contas",
+    "difficulty": "aplicada",
+    "points": 100,
+    "mode": "api",
+    "extras": ["teste_api.py", "skeleton"]
+  }
+]
