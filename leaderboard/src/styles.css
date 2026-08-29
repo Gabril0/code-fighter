@@ -1,0 +1,2678 @@
+@font-face {
+  font-family: "Fighter Body";
+  src: url("/fonts/Inter-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fighter Display";
+  src: url("/fonts/Vinila-Condensed-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fighter Display";
+  src: url("/fonts/Vinila-Condensed-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fighter Display";
+  src: url("/fonts/Vinila-Condensed-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  /* Wii-channels palette, taken from the Gabril0.github.io blog theme. */
+  --wii-bg-top: #d6eefb;
+  --wii-bg-bottom: #a9d8f2;
+  --wii-blue: #00a0e9;
+  --wii-blue-deep: #0078b4;
+  --wii-blue-light: #5ec8f5;
+  --wii-screen-top: #eafaff;
+  --wii-screen-bottom: #bfe6fa;
+  --wii-white: #fdfdfd;
+  --wii-ink: #2a4d63;
+  --wii-ink-soft: #6f93a8;
+  --wii-border: #c5dbe8;
+
+  /* Neo-skeuomorphic soft-UI shadow language. */
+  --shadow-out:
+    8px 8px 18px rgba(86, 130, 158, 0.45),
+    -8px -8px 18px rgba(255, 255, 255, 0.9);
+  --shadow-in:
+    inset 4px 4px 9px rgba(86, 130, 158, 0.35),
+    inset -4px -4px 9px rgba(255, 255, 255, 0.85);
+  --btn-surface: linear-gradient(145deg, #ffffff, #d4e6f1);
+  --btn-raised:
+    5px 5px 11px rgba(86, 130, 158, 0.5),
+    -5px -5px 11px rgba(255, 255, 255, 0.95),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  --btn-raised-hi:
+    7px 7px 15px rgba(86, 130, 158, 0.55),
+    -7px -7px 15px rgba(255, 255, 255, 1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  --btn-pressed:
+    inset 4px 4px 8px rgba(86, 130, 158, 0.5),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+  --gloss: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0) 55%
+  );
+
+  /* Legacy token names remapped onto the Wii palette so the whole app
+     inherits the blue soft-UI look. */
+  --bg: var(--wii-bg-bottom);
+  --bg-secondary: var(--wii-screen-top);
+  --bg-tertiary: var(--wii-white);
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-solid: var(--wii-white);
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-strong: var(--wii-white);
+
+  --border-primary: rgba(255, 255, 255, 0.9);
+  --border-secondary: var(--wii-border);
+
+  --text: var(--wii-ink);
+  --text-secondary: var(--wii-ink);
+  --muted: var(--wii-ink-soft);
+  --ink: var(--wii-ink);
+  --ink-muted: var(--wii-ink-soft);
+  --text-tertiary: var(--wii-ink-soft);
+  --brand: var(--wii-blue);
+
+  /* Blue brand ramp (was green) — keeps any residual references on-palette. */
+  --brand-100: #eafaff;
+  --brand-200: #bfe6fa;
+  --brand-300: #5ec8f5;
+  --brand-400: #00a0e9;
+  --brand-500: #0090d8;
+  --brand-600: #0078b4;
+  --brand-700: #005f90;
+  --brand-950: #06202d;
+
+  --aqua-100: #eafaff;
+  --aqua-300: #9fe3ff;
+  --aqua-400: #5ec8f5;
+  --aqua-500: #00a0e9;
+  --aqua-600: #0078b4;
+
+  --teal: var(--wii-blue-deep);
+  --gold: #f2a413;
+  --red: #ef5a78;
+
+  /* Chunky, friendly Wii rounding. */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+
+  --shadow-sm: var(--btn-raised);
+  --shadow-lg: var(--shadow-out);
+
+  --sheen: var(--gloss);
+
+  --font-body: "Quicksand", system-ui, -apple-system, sans-serif;
+  --font-display: "Varela Round", "Quicksand", system-ui, sans-serif;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, var(--wii-bg-top) 0%, var(--wii-bg-bottom) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.panel h2,
+.tag,
+.hint {
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.panel h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  overflow: hidden;
+}
+
+.frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--bg);
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center center;
+}
+
+.arena {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.arena canvas {
+  display: block;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 18%, transparent 34%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.32) 11%, transparent 24%),
+    radial-gradient(ellipse 78% 62% at 50% 46%, transparent 38%, rgba(0, 0, 0, 0.62) 100%);
+}
+
+.header {
+  position: absolute;
+  top: 1.8rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  font-size: 2.35rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pill {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(4, 120, 87, 0.3);
+  border: 1px solid rgba(6, 95, 70, 0.6);
+  color: var(--brand-300);
+}
+
+.pill--offline {
+  background: rgba(225, 29, 72, 0.3);
+  border-color: rgba(159, 18, 57, 0.6);
+  color: var(--red);
+}
+
+.pill--connecting {
+  background: rgba(180, 83, 9, 0.3);
+  border-color: rgba(146, 64, 14, 0.6);
+  color: var(--gold);
+}
+
+.link {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.link:hover {
+  color: var(--text);
+}
+
+.scorebug {
+  position: absolute;
+  top: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none;
+  background: rgba(9, 9, 11, 0.82);
+  border: 3px solid var(--border-primary);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.55), 0 0 48px rgba(0, 0, 0, 0.75);
+}
+
+.scorebug-side {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  padding: 0.5rem 1.35rem;
+  min-width: 18rem;
+}
+
+.scorebug-side--left {
+  justify-content: flex-end;
+  border-left: 6px solid var(--team);
+}
+
+.scorebug-side--right {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  border-right: 6px solid var(--team);
+}
+
+.scorebug-plate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.scorebug-team {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--team);
+  white-space: nowrap;
+}
+
+.scorebug-score {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 0.88;
+  font-variant-numeric: tabular-nums;
+  min-width: 3.6rem;
+  text-align: center;
+  animation: score-pop 420ms cubic-bezier(0.2, 1.55, 0.4, 1);
+}
+
+.scorebug-side--leading .scorebug-score {
+  text-shadow: 0 0 26px var(--team);
+}
+
+@keyframes score-pop {
+  from {
+    transform: scale(1.75);
+    text-shadow: 0 0 34px var(--team);
+  }
+}
+
+.scorebug-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.5rem 1.15rem;
+  border-left: 2px solid var(--border-secondary);
+  border-right: 2px solid var(--border-secondary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.scorebug-versus {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.scorebug-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.scorebug-side--right .scorebug-dots {
+  flex-direction: row-reverse;
+}
+
+.dot {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  border: 2px solid rgba(42, 77, 99, 0.55);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(42, 77, 99, 0.28));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.dot--past {
+  border-color: var(--team);
+  background: var(--team);
+}
+
+.dot--live {
+  border-color: var(--gold);
+  background: var(--gold);
+  animation: dot-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes dot-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 0.24rem rgba(251, 191, 36, 0);
+  }
+}
+
+.banner {
+  position: absolute;
+  top: 8.4rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  z-index: 2;
+  padding: 0.8rem 1.2rem;
+  border-radius: var(--radius-xl);
+  background: #270711;
+  border: 1px solid rgba(159, 18, 57, 0.7);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.hud {
+  position: absolute;
+  bottom: 5.75rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+}
+
+.hud--left {
+  left: 3rem;
+  align-items: flex-start;
+}
+
+.hud--right {
+  right: 3rem;
+  align-items: flex-end;
+}
+
+.hud-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.hud--right .hud-title {
+  flex-direction: row-reverse;
+}
+
+.hud-icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+.hud-name {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.hud-members {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.hud--right .hud-members {
+  flex-direction: row-reverse;
+}
+
+.member {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  opacity: 0.55;
+  transition: opacity 400ms ease;
+}
+
+.member--fighting {
+  opacity: 1;
+}
+
+.member-photo {
+  position: relative;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  border: 2px solid;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.member-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member--fighting .member-photo {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+.member-initials {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.member-name {
+  font-size: 0.78rem;
+  color: var(--muted);
+  max-width: 5.5rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.member-tag {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.hud-ladder {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.hud--right .hud-ladder {
+  flex-direction: row-reverse;
+}
+
+.rung {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08rem;
+  min-width: 3.2rem;
+  padding: 0.3rem 0.45rem 0.34rem;
+  border: 2px solid var(--border-secondary);
+  background: rgba(9, 9, 11, 0.62);
+  font-variant-numeric: tabular-nums;
+}
+
+.rung-slot {
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rung-value {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rung--locked {
+  opacity: 0.38;
+}
+
+.rung--locked .rung-value {
+  font-size: 0.85rem;
+}
+
+.rung--live {
+  border-color: var(--team);
+  animation: rung-breathe 2.4s ease-in-out infinite;
+}
+
+.rung--done {
+  border-color: var(--team);
+  background: var(--team);
+}
+
+.rung--done .rung-slot {
+  color: rgba(9, 9, 11, 0.62);
+}
+
+.rung--done .rung-value {
+  color: #09090b;
+}
+
+@keyframes rung-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 16px -6px var(--team);
+  }
+  50% {
+    box-shadow: 0 0 26px -2px var(--team);
+  }
+}
+
+.rung-tries {
+  position: absolute;
+  top: -0.55rem;
+  right: -0.55rem;
+  min-width: 1.15rem;
+  padding: 0 0.22rem;
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+  background: var(--red);
+  color: #09090b;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+  animation: miss-flash 520ms ease;
+}
+
+.hud--right .rung-tries {
+  right: auto;
+  left: -0.55rem;
+}
+
+@keyframes miss-flash {
+  0% {
+    transform: scale(2.1);
+    background: var(--text);
+  }
+  60% {
+    transform: scale(1);
+  }
+}
+
+.crowd-list {
+  position: absolute;
+  top: 5.6rem;
+  right: 2.5rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.crowd-list-button {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+}
+
+.crowd-list-button:hover {
+  background: rgba(4, 120, 87, 0.28);
+  border-color: var(--brand-600);
+  color: var(--text);
+}
+
+.crowd-list-button--on {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+  color: #ffffff;
+}
+
+.crowd-list-button em {
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.crowd-list-panel {
+  width: 15rem;
+  max-height: 26rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.7rem;
+  border-radius: var(--radius-xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.crowd-person {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.3rem;
+  border-radius: var(--radius-sm);
+}
+
+.crowd-person--you {
+  background: rgba(4, 120, 87, 0.28);
+}
+
+.crowd-person-photo {
+  position: relative;
+  width: 1.8rem;
+  height: 1.8rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  display: grid;
+  place-items: center;
+}
+
+.crowd-person-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.crowd-person-photo span {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.crowd-person-name {
+  flex: 1;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crowd-person-tag {
+  font-size: 0.62rem;
+  font-style: normal;
+  color: var(--brand-300);
+}
+
+.desk {
+  position: absolute;
+  left: 2.5rem;
+  bottom: 2rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.desk-button {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+}
+
+.desk-button:hover {
+  background: rgba(4, 120, 87, 0.28);
+  border-color: var(--brand-600);
+  color: var(--text);
+}
+
+.desk-button--on {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+  color: #ffffff;
+}
+
+.desk-button em {
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.desk-panel {
+  width: 23rem;
+  max-height: 62vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.95rem;
+  border-radius: var(--radius-xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.desk-tabs {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.desk-tab {
+  position: relative;
+  flex: 1;
+  padding: 0.35rem 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-secondary);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.desk-tab--on {
+  border-color: var(--brand-500);
+  color: var(--text);
+}
+
+.desk-tab--locked {
+  background: transparent;
+  border-style: dashed;
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.desk-tab--done {
+  background: rgba(4, 120, 87, 0.35);
+  color: var(--brand-200);
+}
+
+.desk-tab em {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.25rem;
+  min-width: 0.95rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-style: normal;
+  line-height: 0.9rem;
+}
+
+.desk-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.desk-head-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex: 0 0 auto;
+}
+
+.desk-head-actions .link {
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.desk-head-actions .link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.desk-head strong {
+  display: block;
+  font-size: 0.88rem;
+}
+
+.desk-head .hint {
+  font-size: 0.72rem;
+}
+
+.desk-statement {
+  max-height: 22rem;
+  overflow-y: auto;
+  padding: 0.6rem 0.7rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-secondary);
+}
+
+.statement h3,
+.statement h4,
+.statement h5 {
+  margin: 0.6rem 0 0.3rem;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-300);
+}
+
+.statement p,
+.statement li {
+  margin: 0.3rem 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.statement ul {
+  margin: 0.2rem 0;
+  padding-left: 1rem;
+}
+
+.statement pre {
+  margin: 0.4rem 0;
+  padding: 0.5rem;
+  border-radius: var(--radius-xs);
+  background: #000000;
+  border: 1px solid var(--border-secondary);
+  overflow-x: auto;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--brand-200);
+}
+
+.statement code {
+  padding: 0 0.2rem;
+  border-radius: var(--radius-xs);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+}
+
+.desk-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.desk-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.desk-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.desk-actions button {
+  flex: 1;
+}
+
+.desk-hidden {
+  display: none;
+}
+
+.desk-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: var(--radius-sm);
+  background: rgba(251, 113, 133, 0.12);
+  border: 1px solid rgba(251, 113, 133, 0.4);
+  font-size: 0.78rem;
+}
+
+.desk-result--ok {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: var(--brand-600);
+}
+
+.desk-cases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.desk-case {
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-xs);
+  background: rgba(251, 113, 133, 0.25);
+  color: var(--red);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.desk-case--ok {
+  background: rgba(16, 185, 129, 0.22);
+  color: var(--brand-300);
+}
+
+.desk-case--more {
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.hud-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.hud--empty .hud-slot {
+  font-size: 1.6rem;
+  color: var(--muted);
+}
+
+.panel {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.15rem;
+  border-radius: var(--radius-2xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+  max-height: 756px;
+  overflow-y: auto;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.panel h2 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+input,
+select {
+  background: var(--surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.75rem;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--brand-600);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+button {
+  background: var(--brand-600);
+  color: #ffffff;
+  border: 1px solid var(--brand-600);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--brand-700);
+  border-color: var(--brand-700);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.inline {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inline input {
+  flex: 1;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.status {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.status--ok {
+  color: var(--teal);
+}
+
+.status--error {
+  color: var(--red);
+}
+
+.team-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.team-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+code {
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.toasts {
+  position: absolute;
+  top: 9.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 3;
+}
+
+.toast {
+  display: grid;
+  justify-items: center;
+  gap: 0.1rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-xl);
+  background: rgba(4, 120, 87, 0.32);
+  border: 1px solid rgba(6, 95, 70, 0.8);
+  box-shadow: var(--shadow-lg);
+  animation: pop-in 320ms ease;
+}
+
+.toast--gold {
+  background: rgba(180, 83, 9, 0.32);
+  border-color: rgba(146, 64, 14, 0.8);
+}
+
+.toast strong {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.toast span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.toast em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.toast--gold em {
+  color: var(--gold);
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(-12px);
+  }
+}
+
+.arena-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.banner--center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 34rem;
+  text-align: center;
+}
+
+button.danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid rgba(159, 18, 57, 0.7);
+  box-shadow: none;
+}
+
+button.danger:hover:not(:disabled) {
+  background: rgba(225, 29, 72, 0.16);
+  border-color: rgba(225, 29, 72, 0.6);
+}
+
+.sheet {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.card {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-2xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.card h1 {
+  font-size: 1.6rem;
+}
+
+.hash-input {
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.row-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.photo-picker,
+.team-icon {
+  position: relative;
+  align-self: center;
+  border-radius: 50%;
+  border: 2px solid;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  overflow: hidden;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 0.75rem;
+}
+
+.photo-picker {
+  width: 7rem;
+  height: 7rem;
+}
+
+.team-icon {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.6rem;
+  align-self: start;
+}
+
+.photo-picker img,
+.team-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin {
+  min-height: 100vh;
+  padding: 2rem 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow-y: auto;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.admin-section h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.admin-teams {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-team {
+  flex: 1 1 18rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem;
+  border-radius: var(--radius-xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  border-left: 3px solid;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-team-head {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.admin-team-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.color-input {
+  width: 3rem;
+  padding: 0.15rem;
+  height: 2.1rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-table th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--muted);
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.admin-table td {
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-table input,
+.admin-table select {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+}
+
+.avatar-sm {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border-secondary);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.avatar-sm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hash-chip {
+  background: rgba(4, 120, 87, 0.22);
+  color: var(--teal);
+  border: 1px solid rgba(6, 95, 70, 0.7);
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+}
+
+.tag--ok {
+  color: var(--teal);
+}
+
+.danger-link {
+  color: var(--red);
+}
+
+.admin-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.avatar-sm--editable {
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.avatar-sm--editable:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.photo-clear {
+  font-size: 0.65rem;
+}
+
+.tester {
+  position: absolute;
+  top: 6rem;
+  left: 2.5rem;
+  z-index: 4;
+  width: 17rem;
+  max-height: 68vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem;
+  border-radius: var(--radius-xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.tester-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tester h2 {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+}
+
+.tester-sides,
+.tester-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.tester-chip {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.tester-chip:hover:not(:disabled) {
+  background: rgba(4, 120, 87, 0.28);
+  border-color: var(--brand-600);
+  color: var(--text);
+}
+
+.tester-chip--on {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+  color: #ffffff;
+}
+
+.tester-chip--ghost {
+  border-color: rgba(159, 18, 57, 0.7);
+  color: var(--red);
+}
+
+.join {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: min(920px, 100%);
+}
+
+.join .card {
+  flex: 1 1 20rem;
+}
+
+.join-photo {
+  font-size: 0.8rem;
+}
+
+.join-preview {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  align-self: center;
+  border: 2px solid var(--brand-600);
+}
+
+.dock {
+  position: absolute;
+  right: 2.5rem;
+  bottom: 2rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.dock-bar {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.dock-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+}
+
+.dock-button:hover:not(:disabled) {
+  background: rgba(4, 120, 87, 0.28);
+  border-color: var(--brand-600);
+  color: var(--text);
+}
+
+.dock-button--on {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+  color: #ffffff;
+}
+
+.dock-badge {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+  min-width: 1.15rem;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: var(--red);
+  color: #09090b;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.15rem;
+}
+
+.dock-panel {
+  width: 19rem;
+  max-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.9rem;
+  border-radius: var(--radius-xl);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.dock-panel h2 {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+}
+
+.dock-emotes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dock-emote {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.dock-emote:hover:not(:disabled) {
+  background: rgba(4, 120, 87, 0.28);
+  border-color: var(--brand-600);
+  color: var(--text);
+}
+
+
+
+.crowd-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.crowd-line {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  transition: opacity 4s linear;
+}
+
+.crowd-line--fading {
+  opacity: 0;
+}
+
+.crowd-line strong {
+  color: var(--brand-300);
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+
+.crowd-line span {
+  color: var(--text-secondary);
+}
+
+
+.tester--closed {
+  width: auto;
+  padding: 0.5rem;
+  max-height: none;
+}
+
+.tester-toggle {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  cursor: pointer;
+}
+
+.tester-toggle:hover {
+  background: none;
+  color: var(--text);
+}
+
+.crowd-line--member strong {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.crowd-line--member span {
+  color: var(--text);
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 46%, rgba(0, 0, 0, 0.34) 100%),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.13) 0px,
+      rgba(0, 0, 0, 0.13) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  animation: crt-flicker 5.5s steps(2, end) infinite;
+}
+
+@keyframes crt-flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.94; }
+  98% { opacity: 1; }
+  99% { opacity: 0.96; }
+}
+
+.settings {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 15rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-lg);
+}
+
+.settings-panel h2 {
+  margin: 0 0 0.15rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.settings-row input {
+  accent-color: var(--brand);
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.settings-note {
+  margin: 0.15rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--text-tertiary);
+}
+
+
+/* ============================================================
+   Wii soft-UI skin
+   Neo-skeuomorphic blue theme mirroring the Gabril0.github.io blog
+   (wii-channels): raised white panels, inset screen pods, pill
+   buttons with dual light/shadow relief.
+   ============================================================ */
+
+/* --- Raised white panels with a glossy top cap --- */
+.panel,
+.card,
+.desk-panel,
+.dock-panel,
+.crowd-list-panel,
+.tester,
+.settings-panel,
+.admin-team,
+.banner,
+.toast {
+  background: var(--wii-white);
+  border: none;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-out);
+  color: var(--wii-ink);
+}
+
+.panel::before,
+.card::before,
+.desk-panel::before,
+.dock-panel::before,
+.crowd-list-panel::before,
+.tester::before,
+.settings-panel::before,
+.admin-team::before {
+  content: "";
+  position: absolute;
+  inset: 3px 3px auto 3px;
+  height: 38%;
+  border-radius: calc(var(--radius-2xl) - 6px);
+  background: var(--gloss);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.panel > *,
+.card > *,
+.desk-panel > *,
+.dock-panel > *,
+.crowd-list-panel > *,
+.tester > *,
+.settings-panel > *,
+.admin-team > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Panels that are static in normal flow need a positioning context. */
+.card,
+.desk-panel,
+.dock-panel,
+.crowd-list-panel,
+.tester,
+.settings-panel,
+.admin-team {
+  position: relative;
+}
+
+.card,
+.join .card {
+  padding: 28px 30px;
+}
+
+/* --- Soft-UI pill buttons (Wii nav buttons) --- */
+button:not(.link):not(.tester-toggle) {
+  border: none;
+  border-radius: 999px;
+  background: var(--btn-surface);
+  color: var(--wii-blue-deep);
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+  box-shadow: var(--btn-raised);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, color 0.15s ease;
+}
+
+button:not(.link):not(.tester-toggle):hover:not(:disabled) {
+  box-shadow: var(--btn-raised-hi);
+  color: var(--wii-blue);
+}
+
+button:not(.link):not(.tester-toggle):active:not(:disabled) {
+  box-shadow: var(--btn-pressed);
+  transform: translateY(1px);
+  color: var(--wii-blue-deep);
+}
+
+button.danger {
+  background: var(--btn-surface);
+  color: #d23b5c;
+  box-shadow: var(--btn-raised);
+}
+
+button.danger:hover:not(:disabled) {
+  box-shadow: var(--btn-raised-hi);
+  color: #ef5a78;
+}
+
+/* --- Toolbar / chip buttons share the raised soft-UI relief --- */
+.crowd-list-button,
+.desk-button,
+.dock-button,
+.desk-tab,
+.tester-chip,
+.desk-emote,
+.hash-chip {
+  border: none;
+  border-radius: 999px;
+  background: var(--btn-surface);
+  color: var(--wii-blue-deep);
+  box-shadow: var(--btn-raised);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, color 0.15s ease;
+}
+
+.desk-tab {
+  border-radius: 12px;
+}
+
+.crowd-list-button:hover,
+.desk-button:hover,
+.dock-button:hover:not(:disabled),
+.tester-chip:hover:not(:disabled),
+.desk-emote:hover:not(:disabled),
+.desk-tab:hover {
+  box-shadow: var(--btn-raised-hi);
+  color: var(--wii-blue);
+}
+
+.crowd-list-button:active,
+.desk-button:active,
+.dock-button:active,
+.tester-chip:active,
+.desk-emote:active,
+.desk-tab:active {
+  box-shadow: var(--btn-pressed);
+  transform: translateY(1px);
+}
+
+.crowd-list-button--on,
+.desk-button--on,
+.dock-button--on,
+.tester-chip--on,
+.desk-tab--on {
+  background: linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 60, 90, 0.4);
+  box-shadow: var(--btn-pressed), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.desk-tab em,
+.crowd-list-button em,
+.desk-button em,
+.dock-button em {
+  background: rgba(0, 120, 180, 0.14);
+  color: var(--wii-blue-deep);
+}
+
+.hash-chip {
+  color: var(--wii-blue-deep);
+  font-weight: 700;
+}
+
+/* --- Inputs and "screen" surfaces get the inset pod treatment --- */
+input,
+select,
+textarea,
+.desk-statement,
+.scorebug-centre {
+  background: linear-gradient(180deg, var(--wii-screen-top), var(--wii-screen-bottom));
+  border: none;
+  border-radius: 14px;
+  color: var(--wii-ink);
+  box-shadow: var(--shadow-in);
+}
+
+input::placeholder {
+  color: var(--wii-ink-soft);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: var(--shadow-in), 0 0 0 3px var(--wii-blue-light);
+}
+
+/* --- Tags / pills / status chips --- */
+.pill,
+.tag--ok,
+.crowd-person-tag,
+.crowd-line--member strong {
+  color: #fff;
+}
+
+.pill {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 3px 8px -4px rgba(0, 120, 180, 0.5);
+  font-weight: 600;
+}
+
+.pill--offline {
+  background: linear-gradient(180deg, #ff8fa3, #d23b5c);
+}
+
+.pill--connecting {
+  background: linear-gradient(180deg, #ffd27a, #d98a0a);
+}
+
+.crowd-person-tag {
+  background: linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+}
+
+/* --- Scorebug: raised white plate with gloss cap --- */
+.scorebug {
+  border: none;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  background: var(--wii-white);
+  box-shadow: var(--shadow-out);
+}
+
+.scorebug::before {
+  content: "";
+  position: absolute;
+  inset: 3px 3px auto 3px;
+  height: 42%;
+  border-radius: calc(var(--radius-2xl) - 6px) calc(var(--radius-2xl) - 6px) 60% 60%;
+  background: var(--gloss);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.scorebug-side,
+.scorebug-centre {
+  position: relative;
+  z-index: 1;
+}
+
+.scorebug-versus {
+  color: var(--wii-ink-soft);
+}
+
+/* --- Ladder rungs as small inset screen tiles --- */
+.rung {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--wii-screen-top), var(--wii-screen-bottom));
+  box-shadow: var(--shadow-in);
+  color: var(--wii-ink);
+}
+
+.rung-slot {
+  color: var(--wii-ink-soft);
+}
+
+.rung--done {
+  background: linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+}
+
+.rung--done .rung-value {
+  color: #fff;
+}
+
+.rung--done .rung-slot {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Banner + toast --- */
+.banner {
+  color: var(--wii-ink);
+  border-radius: var(--radius-lg);
+}
+
+.toast {
+  border-radius: var(--radius-lg);
+  color: var(--wii-ink);
+}
+
+.toast strong {
+  color: var(--wii-blue-deep);
+}
+
+.toast--gold strong {
+  color: #d98a0a;
+}
+
+.toast span {
+  color: var(--wii-ink-soft);
+}
+
+/* --- Post-style rows in the crowd log --- */
+.crowd-line strong {
+  color: var(--wii-blue-deep);
+}
+
+/* --- Avatars / photo pods get a soft raised ring --- */
+.member-photo,
+.crowd-person-photo,
+.avatar-sm,
+.photo-picker,
+.team-icon,
+.join-preview {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--btn-raised);
+}
+
+/* --- Code blocks keep the blog's deep-blue console look --- */
+.statement pre {
+  background: linear-gradient(180deg, #0a2c3e, #06202d);
+  border: none;
+  border-radius: 14px;
+  color: #d6f3ff;
+  box-shadow: var(--shadow-in);
+}
+
+.statement code {
+  background: var(--wii-screen-bottom);
+  color: var(--wii-blue-deep);
+}
+
+.statement h3,
+.statement h4,
+.statement h5 {
+  color: var(--wii-blue-deep);
+}
+
+.admin-table th {
+  color: var(--wii-ink-soft);
+  border-bottom: 1px solid rgba(111, 147, 168, 0.3);
+}
+
+.admin-table td {
+  border-bottom: 1px solid rgba(111, 147, 168, 0.18);
+}
+
+/* ============================================================
+   Text floating directly over the (dark) 3D arena stays light
+   ============================================================ */
+.header h1,
+.hud-name,
+.hud-note,
+.hud-slot,
+.hud--empty .hud-slot,
+.member-name,
+.member-initials {
+  color: #fdfdff;
+  text-shadow: 0 2px 10px rgba(6, 40, 60, 0.9), 0 0 2px rgba(6, 40, 60, 0.85);
+}
+
+.header .link {
+  color: #eaf7ff;
+  text-shadow: 0 1px 6px rgba(6, 40, 60, 0.85);
+}
+
+.header .link:hover {
+  color: #ffffff;
+}
+
+.arena-loading {
+  color: #eaf7ff;
+  text-shadow: 0 2px 10px rgba(6, 40, 60, 0.9);
+}
+
+/* --- Neo-skeuomorphic soft scrollbars (from the blog) --- */
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, #c4e0f4, #aed4ee);
+  border-radius: 12px;
+  box-shadow:
+    inset 3px 3px 7px rgba(86, 130, 158, 0.55),
+    inset -3px -3px 7px rgba(255, 255, 255, 0.85);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 12px;
+  background-color: #d4e6f1;
+  background-image: linear-gradient(145deg, #ffffff, #cfe2f0);
+  box-shadow:
+    3px 3px 7px rgba(86, 130, 158, 0.5),
+    -3px -3px 7px rgba(255, 255, 255, 0.95),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* --- Native file picker restyled as a Wii soft-UI pill --- */
+input[type="file"] {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+  color: var(--wii-ink-soft);
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+  margin-right: 0.7rem;
+  padding: 0.4rem 0.95rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--btn-surface);
+  color: var(--wii-blue-deep);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  cursor: pointer;
+  box-shadow: var(--btn-raised);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, color 0.15s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+  box-shadow: var(--btn-raised-hi);
+  color: var(--wii-blue);
+}
+
+input[type="file"]::file-selector-button:active {
+  box-shadow: var(--btn-pressed);
+  transform: translateY(1px);
+}
+
+/* ============================================================
+   Fixes: placar legibility, styled checkboxes, focus mode
+   ============================================================ */
+
+/* --- Scorebug pops off the bright arena --- */
+.scorebug {
+  box-shadow:
+    var(--shadow-out),
+    0 0 0 3px rgba(255, 255, 255, 0.85),
+    0 0 0 5px rgba(0, 120, 180, 0.28),
+    0 14px 30px -10px rgba(6, 40, 60, 0.55);
+}
+
+.scorebug-score {
+  color: var(--wii-ink);
+  text-shadow: 0 1px 0 #fff, 0 2px 4px rgba(6, 40, 60, 0.18);
+}
+
+/* --- Big HUD team names stay readable over the bright ring floor --- */
+.hud-name {
+  -webkit-text-stroke: 1.5px rgba(6, 40, 60, 0.7);
+  paint-order: stroke fill;
+  text-shadow:
+    0 2px 8px rgba(6, 40, 60, 0.95),
+    0 0 14px rgba(6, 40, 60, 0.7);
+}
+
+.member-name {
+  -webkit-text-stroke: 0.8px rgba(6, 40, 60, 0.55);
+  paint-order: stroke fill;
+}
+
+/* --- Custom Wii soft-UI checkboxes --- */
+.settings-row input[type="checkbox"],
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.3rem;
+  height: 1.3rem;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 7px;
+  background: linear-gradient(180deg, var(--wii-screen-top), var(--wii-screen-bottom));
+  box-shadow: var(--shadow-in);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.settings-row input[type="checkbox"]:hover,
+input[type="checkbox"]:hover {
+  box-shadow: var(--shadow-in), 0 0 0 2px var(--wii-blue-light);
+}
+
+.settings-row input[type="checkbox"]:checked,
+input[type="checkbox"]:checked {
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M4 12.5l5 5 11-12'/></svg>")
+      center / 74% no-repeat,
+    linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+  box-shadow: var(--btn-raised);
+}
+
+/* ============================================================
+   Focus mode ("Modo foco") — clean broadcast view
+   Strips the peripheral chrome and keeps the ring + scoreboard.
+   ============================================================ */
+.stage--focus .crowd-list,
+.stage--focus .dock,
+.stage--focus .settings,
+.stage--focus .desk,
+.stage--focus .header .pill {
+  display: none;
+}
+
+.stage--focus .scrim {
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.28) 16%, transparent 32%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.22) 12%, transparent 26%),
+    radial-gradient(ellipse 82% 66% at 50% 46%, transparent 42%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+/* The title fades so only the scorebug leads the broadcast. */
+.stage--focus .header h1 {
+  opacity: 0.35;
+  transition: opacity 0.3s ease;
+}
+
+/* Keep the toggle obvious as the way back out. */
+.stage--focus .header .link {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* =====================================================================
+   UI polish: bolder themed text, blue-tinted danger (red -> purple),
+   readable chips/badges, roomier nav buttons, tidy animation tester.
+   ===================================================================== */
+
+/* Red shifts toward a blue-violet so it stays on-theme and legible. */
+:root {
+  --red: #7c5cd6;
+  --danger: #6d43c4;
+  --danger-strong: #7c5cd6;
+}
+
+/* --- Header nav: roomier pills + bold, themed links --- */
+.header .header-actions {
+  gap: 0.6rem;
+}
+
+.header .pill {
+  padding: 0.42rem 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.header .link {
+  padding: 0.42rem 0.85rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--wii-white);
+  background: rgba(0, 120, 180, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-shadow: 0 1px 4px rgba(6, 40, 60, 0.7);
+}
+
+.header .link:hover {
+  color: var(--wii-white);
+  background: rgba(0, 120, 180, 0.5);
+}
+
+/* --- Tag / status badges: proper chips so text is always readable --- */
+.tag {
+  display: inline-block;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 700;
+  color: var(--wii-ink);
+  background: linear-gradient(180deg, #ffffff, #dcecf6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 5px -3px rgba(0, 120, 180, 0.5);
+}
+
+.tag--ok {
+  color: var(--wii-white);
+  background: linear-gradient(180deg, var(--wii-blue-light), var(--wii-blue-deep));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 6px -3px rgba(0, 120, 180, 0.6);
+}
+
+/* --- Danger "Remove" link: bold, purple-tinted, with breathing room --- */
+.danger-link {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--wii-white);
+  background: linear-gradient(180deg, #a48be6, var(--danger));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 2px 6px -3px rgba(80, 40, 140, 0.6);
+}
+
+.danger-link:hover {
+  color: var(--wii-white);
+  background: linear-gradient(180deg, #b39cf0, var(--danger-strong));
+}
+
+button.danger {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+button.danger:hover:not(:disabled) {
+  color: var(--danger-strong);
+}
+
+.pill--offline {
+  background: linear-gradient(180deg, #b7a3ec, var(--danger)) !important;
+  color: var(--wii-white);
+}
+
+.tester-chip--ghost {
+  border-color: rgba(124, 92, 214, 0.7);
+  color: var(--danger);
+  font-weight: 700;
+}
+
+/* --- Animation tester: keep the collapsed toggle a tidy pill --- */
+.tester--closed {
+  width: max-content;
+  max-width: 20rem;
+  padding: 0.3rem;
+}
+
+.tester-toggle {
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  color: var(--wii-ink);
+  font-weight: 700;
+}
+
+.tester-toggle:hover {
+  color: var(--wii-blue-deep);
+}
+
+/* --- Admin dashboard header links: padded ink pills on the light bg --- */
+.admin-header .row-links {
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.admin-header .row-links .link,
+.admin-header .link {
+  padding: 0.42rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--wii-ink);
+  background: linear-gradient(180deg, #ffffff, #dcecf6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 2px 6px -3px rgba(0, 120, 180, 0.55);
+}
+
+.admin-header .row-links .link:hover,
+.admin-header .link:hover {
+  color: var(--wii-blue-deep);
+  background: linear-gradient(180deg, #ffffff, #cfe6f4);
+}
+
+.admin-header .pill {
+  padding: 0.42rem 0.95rem;
+  font-weight: 700;
+}
+
+/* ============================================================
+   Frutiger revision — Organizer dashboard elements
+   ============================================================ */
+
+/* Section headers: little glossy blue tab instead of flat label */
+.admin-section h2 {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
+  color: var(--wii-blue-deep);
+  background: linear-gradient(180deg, #ffffff, #d9ecf8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 6px -3px rgba(0, 120, 180, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Team card: crisper corner accent + roomier body */
+.admin-team {
+  padding: 1.1rem 1.15rem;
+  gap: 0.85rem;
+}
+
+.admin-team-head {
+  align-items: center;
+}
+
+/* Color picker → a glossy raised button with a rounded colour square inside */
+.color-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 3.4rem;
+  height: 2.5rem;
+  padding: 0.34rem;
+  border: none;
+  border-radius: 13px;
+  background: var(--btn-surface);
+  box-shadow: var(--btn-raised);
+  cursor: pointer;
+  transition: box-shadow 0.18s ease, transform 0.12s ease;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+  border: 1px solid rgba(0, 60, 90, 0.28);
+  border-radius: 7px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.55), inset 0 -2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.color-input::-moz-color-swatch {
+  border: 1px solid rgba(0, 60, 90, 0.28);
+  border-radius: 7px;
+}
+
+.color-input:hover {
+  box-shadow: var(--btn-raised-hi);
+}
+
+.color-input:active {
+  box-shadow: var(--btn-pressed);
+  transform: translateY(1px);
+}
+
+.inline .color-input {
+  flex: 0 0 auto;
+}
+
+/* People table: soft zebra rows + rounded row separators */
+.admin-table th {
+  color: var(--wii-blue-deep);
+  font-weight: 700;
+  border-bottom: 1px solid rgba(0, 120, 180, 0.18);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+.admin-table td {
+  border-bottom: 1px solid rgba(0, 120, 180, 0.1);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Native selects → frutiger inset pod with a custom chevron */
+.admin-table select,
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2rem;
+  background-image:
+    linear-gradient(180deg, var(--wii-screen-top), var(--wii-screen-bottom)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230078b4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, right 0.7rem center;
+  background-size: auto, 0.7rem;
+}
+
+/* Editable member photo → glossy circle instead of dashed hole */
+.avatar-sm--editable {
+  border: none;
+  background: var(--btn-surface);
+  box-shadow: var(--btn-raised);
+  color: var(--wii-blue-deep);
+  font-weight: 700;
+  transition: box-shadow 0.18s ease, color 0.15s ease;
+}
+
+.avatar-sm--editable:hover {
+  border: none;
+  box-shadow: var(--btn-raised-hi);
+  color: var(--wii-blue);
+}
+
+.avatar-sm--editable:active {
+  box-shadow: var(--btn-pressed);
+}
+
+/* Non-editable member avatar gets a soft ring */
+.avatar-sm {
+  border: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7), var(--btn-raised);
+}
+
+/* Small "Remove" under a photo → tidy purple mini pill */
+.photo-clear {
+  margin-top: 0.15rem;
+}
+
+/* Contest reset button spans nicely as a frutiger bar */
+.admin-section > button.danger {
+  align-self: flex-start;
+  padding: 0.6rem 1.3rem;
+}
+
+/* People table: fixed column widths so they never shift as content changes */
+.admin-table {
+  table-layout: fixed;
+}
+
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1) { width: 8%; }
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) { width: 30%; }
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3) { width: 16%; }
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4) { width: 22%; }
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) { width: 10%; }
+.admin-table th:nth-child(6),
+.admin-table td:nth-child(6) { width: 14%; }
+
+/* Keep the login-hash chip from forcing its column wider */
+.admin-table .hash-chip {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
