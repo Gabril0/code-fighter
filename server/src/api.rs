@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use axum::extract::{Path, State as AxumState};
 use axum::http::{HeaderMap, StatusCode};
@@ -13,7 +13,7 @@ use axum::http::{HeaderValue, Method};
 use tower_http::cors::{AllowOrigin, CorsLayer};
 
 use crate::model::{Role, State, Team, User};
-use crate::questions::{self, Mode, Question};
+use crate::questions::{self, Case, Mode, Question};
 use crate::store::{now_millis, random_id, Store};
 use crate::zip::ZipBuilder;
 use crate::{apicheck, judge};
@@ -21,6 +21,37 @@ use crate::{apicheck, judge};
 pub struct Ctx {
     pub store: Store,
     pub questions: Vec<Question>,
+    /// Cache of the fully-materialised case list per (team, question). Building
+    /// generated cases shells out to the question's generator/solver, so we do
+    /// it once per team and reuse the result until the contest is reset.
+    generated: Mutex<HashMap<(String, String), Arc<Vec<Case>>>>,
+}
+
+impl Ctx {
+    pub fn new(store: Store, questions: Vec<Question>) -> Self {
+        Self {
+            store,
+            questions,
+            generated: Mutex::new(HashMap::new()),
+        }
+    }
+
+    /// Return the ordered case list for a team, generating and caching the
+    /// per-team cases on first use.
+    fn cases_for(&self, question: &Question, team_id: &str) -> anyhow::Result<Arc<Vec<Case>>> {
+        let key = (team_id.to_string(), question.id.clone());
+        if let Some(cached) = self.generated.lock().unwrap().get(&key).cloned() {
+            return Ok(cached);
+        }
+        let cases = Arc::new(questions::cases_for(question, team_id)?);
+        self.generated.lock().unwrap().insert(key, cases.clone());
+        Ok(cases)
+    }
+
+    /// Drop every cached case list (used when the contest is reset).
+    fn clear_generated(&self) {
+        self.generated.lock().unwrap().clear();
+    }
 }
 
 type Shared = Arc<Ctx>;
@@ -470,7 +501,7 @@ async fn question_pack(
     let state = load(&ctx)?;
     guard_unlocked(&ctx, &state, &user, &team_id, &id)?;
     let question = find_question(&ctx, &id)?;
-    let cases = questions::cases_for(question, &team_id);
+    let cases = ctx.cases_for(question, &team_id).map_err(oops)?;
 
     let mut zip = ZipBuilder::new();
     zip.add("statement.md", question.statement.clone());
@@ -478,7 +509,7 @@ async fn question_pack(
     if !cases.is_empty() {
         zip.add("run.sh", RUNNER);
     }
-    for case in &cases {
+    for case in cases.iter() {
         zip.add(format!("inputs/{}.in", case.name), case.input.clone());
     }
     for extra in &question.extras {
@@ -908,7 +939,7 @@ async fn submit(
                 "anexe os arquivos de saída antes de enviar",
             ));
         }
-        let cases = questions::cases_for(question, &team_id);
+        let cases = ctx.cases_for(question, &team_id).map_err(oops)?;
         judge_files(question, &cases, &payload.outputs)
     };
 
@@ -1283,6 +1314,7 @@ async fn reset_match(
             tx.execute("DELETE FROM attempts", [])
         })
         .map_err(oops)?;
+    ctx.clear_generated();
     Ok(Json(json!({ "ok": true })))
 }
 

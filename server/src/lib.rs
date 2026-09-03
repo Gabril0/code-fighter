@@ -1,9 +1,9 @@
 pub mod api;
 pub mod apicheck;
+pub mod generation;
 pub mod judge;
 pub mod model;
 pub mod questions;
-pub mod reference;
 pub mod rng;
 pub mod store;
 pub mod zip;

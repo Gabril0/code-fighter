@@ -68,75 +68,79 @@ Anyone can submit for their own team once assigned; the organiser can submit for
 
 ## The questions
 
-The five questions of the Code Fighter contest live in `server/questions/`, listed in
-`manifest.json` and loaded at boot. Restart to pick up changes.
+The three questions of the Code Fighter contest live in `server/questions/`, listed in
+`manifest.json` and loaded at boot. Restart to pick up changes. They are classic
+computer-science warm-ups:
+
+| id | title | mode | idea |
+|---|---|---|---|
+| q1 | Maximum Subarray Sum | `numeric` | Kadane's algorithm — largest contiguous sum |
+| q2 | FizzBuzz | `exact` | print 1..N with Fizz / Buzz / FizzBuzz |
+| q3 | Word Frequency Count | `json` | count each word, return a JSON object |
+
+A question is just a folder plus a manifest entry — you never touch Rust to add one:
 
 ```json
-{ "id": "q1", "dir": "Q1-patrimonio-liquido", "title": "Patrimônio Líquido",
-  "difficulty": "aquecimento", "points": 100, "mode": "numeric" }
+{ "id": "q1", "dir": "Q1-maximum-subarray", "title": "Maximum Subarray Sum",
+  "difficulty": "warm-up", "points": 100, "mode": "numeric",
+  "generated_cases": 100, "generator": ["python3", "generator.py"],
+  "solver": ["python3", "solver.py"] }
 ```
 
-Each folder holds `enunciado.md` and `testes/NN.in` + `NN.out`. **Only the inputs ever leave the
-server.** A team downloads a ZIP with the statement, every input and a `rodar.sh` helper, runs
-their program once per input, and uploads the `.out` files. `extras` in the manifest is an
-explicit allowlist of extra files to ship — anything not listed stays server-side, so dropping a
-`solucao.py` into a question folder cannot leak it into a competitor's pack.
+Each folder holds `statement.md` and `tests/NN.in` + `NN.out` (the legacy `enunciado.md` and
+`testes/` names still load). **Only the inputs ever leave the server.** A team downloads a ZIP
+with the statement, every input and a `run.sh` helper, runs their program once per input, and
+uploads the `.out` files. `extras` in the manifest is an explicit allowlist of extra files to
+ship — anything not listed stays server-side, so dropping a `solver.py` into a question folder
+cannot leak it into a competitor's pack.
+
+### Policy is separated from mechanism
+
+The server is a generic **engine**: it knows how to run a program, seed it, judge its output,
+and cache the result. It knows nothing about any specific problem. Each question supplies its own
+**generator** and **solver** — a Python script, a compiled binary, anything executable — and the
+engine just runs them (see `server/questions/AUTHORING.md`). To scaffold a new one:
+
+```
+python3 tools/new_question.py q4 "Two Sum" --mode numeric
+```
+
+The contract is tiny. The generator is invoked as `<cmd> <seed>` (the same seed is also in
+`CASE_SEED`) and prints one test **input** to stdout; the solver reads an input on **stdin** and
+prints the expected **output**. Both run with the question folder as their working directory, and
+both must be deterministic for a given seed.
 
 ### Cases are generated per team
 
-Each question serves **107–111 cases**: the curated ones from `testes/` first (the first two are
-the statement's examples, so everyone gets them), then **100 generated from a seed derived from
-the team id and the question id**. Q1–Q4 have a native generator and reference solver in
-`src/reference/`, so the server produces both the input and the expected output — no Python at
-event time.
+Each question serves the curated cases from `tests/` first (the first two are the statement's
+examples, so everyone gets them), then **100 generated from a seed derived from the team id and
+the question id**. The engine runs the question's generator to build the input and its solver to
+compute the expected output, so no answer key is ever shipped.
 
 The consequence that matters: the two teams get different inputs. Feeding one team's outputs to
-the other scores only the shared curated prefix — 7/107 on Q1. Generation is deterministic, so a
-team re-downloading its pack gets a byte-identical ZIP, and judging always reproduces the same
-cases the team was given. Packs run 42 KB–490 KB and take under 60 ms to build.
-
-The Rust solvers are checked against your `solucao.py`: they reproduce all 38 shipped gabaritos
-exactly and agree over 12,000 generated cases per sweep. Two details keep them equivalent — the
-Q4 ledger sums balances in first-integralisation order, because Python iterates its dict that way
-and float addition is not associative, and it uses `powf` rather than repeated multiplication so
-`(1 + taxa) ** dias` maps onto the same C `pow`.
-
-The generators deliberately construct the shapes each trap needs: Q3 hands out ids independently
-of settlement order and emits the file shuffled (so both the id and the credit-before-debit
-tie-breaks are required), sometimes debits exactly the balance (so `>` fails where `>=` passes),
-and Q2 duplicates its best day (so a `>=` argmax picks the wrong one). Q4 mixes long runs with
-small amounts, where per-step rounding drifts past the absolute tolerance. Every wrong
-implementation we tried is caught by at least 25 of the cases.
+the other scores only the shared curated prefix. Generation is deterministic, so a team
+re-downloading its pack gets the same cases, and judging always reproduces the same cases the
+team was given. Because 100 cases mean 200 subprocess calls, each team's set is built once and
+**cached** — the first pack takes a few seconds, later ones are instant — and the cache is
+cleared on **Reset match**.
 
 `mode` picks how the answer is compared:
 
-| mode | used by | rule |
-|---|---|---|
-| `numeric` | Q1, Q2 | line by line, token by token; numbers match within **0.01 absolute** |
-| `exact` | Q3 | text must match exactly — the question is all integer arithmetic |
-| `json` | Q4 | parsed and compared semantically; numbers within **max(0.01, 1e-6 × expected)** |
-| `api` | Q5 | no files: the team submits their API's URL and the server runs 28 live checks |
-
-For Q5 the team can point the judge at a LAN address or at any `https://` endpoint — a
-tunnel (`cloudflared tunnel --url http://localhost:8000`, `ngrok http 8000`) is the path the
-pack recommends, since it keeps their own process alive and the question stores accounts in
-memory. Serverless hosting breaks that: a correct solution scores 13/28 when state does not
-survive between requests, so the pack says so explicitly. The client speaks TLS through
-`rustls` and trusts the OS certificate store as well as the Mozilla bundle, which matters on a
-corporate laptop behind TLS inspection — Python's `teste_api.py` cannot validate through it,
-the judge can.
+| mode | rule |
+|---|---|
+| `numeric` | line by line, token by token; numbers match within **0.01 absolute** |
+| `exact` | text must match exactly (trailing whitespace and final newline are ignored) |
+| `json` | parsed and compared semantically; numbers within **max(0.01, 1e-6 × expected)** |
+| `api` | no files: the team submits their API's URL and the server runs live checks |
 
 Trailing whitespace, a missing final newline, a UTF-8 BOM and `-0.00` vs `0.00` never decide a
 verdict. Numbers are compared as scaled integers, not floats, so a value exactly one cent out
 lands inside the window instead of on a rounding coin-flip.
 
-The `api` mode is a hand-port of `teste_api.py` — same 28 checks, same order, same wording — so a
-team gets the same score from the site as from running the script themselves.
-
 **Questions unlock in order.** A team sees the ones it has solved plus the next one; the rest
 answer `403` on the statement, the pack and the submission alike, so hiding them in the panel is
-presentation, not the control. The organiser bypasses it. This deliberately overrides the
-`t = 0` rule in the original notes — a team stuck on Q2 cannot skip ahead to Q3.
+presentation, not the control. The organiser bypasses it — a team stuck on q2 cannot skip ahead
+to q3.
 
 **A wrong submission costs nothing.** It bumps the attempt counter, ragdolls that team's fighter
 on every screen watching, and leaves the score untouched. Hidden cases never reveal the expected
@@ -232,11 +236,6 @@ A free instance sleeps after 15 minutes without traffic, and the first request a
 close to a minute. Point any external pinger at `/health` every 10 minutes — cron-job.org and
 UptimeRobot both do it on a free plan. A ping keeps it warm, but it cannot prevent a redeploy or
 a platform restart, which is exactly what the seed is for.
-
-### Q5 changes shape
-
-With the checker on the internet and the teams behind NAT, the judge cannot reach a LAN address.
-A tunnel stops being a suggestion and becomes the only route, and the question pack says so.
 
 ## Things worth knowing
 

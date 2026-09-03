@@ -38,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
     let store = Store::open(state_path.clone())?;
     println!("database: {}", state_path.display());
 
-    let ctx = Arc::new(Ctx { store, questions });
+    let ctx = Arc::new(Ctx::new(store, questions));
     let listener = tokio::net::TcpListener::bind(bind).await?;
     println!("checker listening on http://{bind}");
 
