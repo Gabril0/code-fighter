@@ -11,14 +11,32 @@ generator and solver (policy).
 Q6-my-question/
   statement.md        # the problem statement shown to teams (enunciado.md also works)
   tests/              # sample/public cases: 01.in + 01.out, 02.in + 02.out, ...  (testes/ also works)
-  generator.py        # OPTIONAL: prints one random test input to stdout
-  solver.py           # OPTIONAL: reads an input on stdin, prints the expected output
 ```
 
 The first two `tests/` cases are **public** (shown and downloadable). The
 rest are private. If you set `generated_cases`, that many extra **private**
 cases are produced per team, seeded from the team id, so no two teams get
-the same anti-cheat cases.
+the same anti-cheat cases. The generator and solver that produce them are
+just commands you name in the manifest — they can live anywhere (a compiled
+binary, a script in the folder, ...).
+
+## How the shipped questions do it (Rust)
+
+The three built-in questions share one small Rust binary, `qtool`
+(`server/src/bin/qtool.rs`), which `cargo build --release` produces
+alongside the server at `server/target/release/qtool`. It dispatches on its
+arguments:
+
+```
+qtool <id> gen <seed>   # prints one input to stdout
+qtool <id> solve        # reads an input on stdin, prints the expected output
+```
+
+so each question's manifest simply points at it with a path relative to the
+question folder (the server canonicalizes the folder, so it resolves from any
+working directory). To add a Rust question, add `q<id>_generate` /
+`q<id>_solve` functions and two `match` arms in `qtool.rs`, rebuild, and add
+the manifest entry below.
 
 ## Manifest entry
 
@@ -27,12 +45,12 @@ the same anti-cheat cases.
   "id": "q6",
   "dir": "Q6-my-question",
   "title": "My Question",
-  "difficulty": "intermediária",
+  "difficulty": "intermediate",
   "points": 100,
   "mode": "numeric",
   "generated_cases": 100,
-  "generator": ["python3", "generator.py"],
-  "solver":    ["python3", "solver.py"]
+  "generator": ["../../target/release/qtool", "q6", "gen"],
+  "solver":    ["../../target/release/qtool", "q6", "solve"]
 }
 ```
 
@@ -62,8 +80,9 @@ In Python, seed with `random.seed(int(sys.argv[1]))`.
 
 ## Any language
 
-`generator`/`solver` are just command lines, so anything works. Compile a
-binary and point at it:
+`generator`/`solver` are just command lines, so anything works — the shipped
+questions use the Rust `qtool` binary above. Compile your own and point at
+it:
 
 ```json
 "generator": ["./gen"],
@@ -71,7 +90,9 @@ binary and point at it:
 ```
 
 Bare names (`python3`, `node`) resolve on `PATH`; anything starting with `.`
-or containing `/` is resolved against the question folder.
+or containing `/` is resolved against the question folder. A Python question,
+for example, would seed with `random.seed(int(sys.argv[1]))` and read its
+input on stdin.
 
 ## Quick scaffold
 
@@ -80,11 +101,12 @@ python3 tools/new_question.py q6 "My Question" --mode numeric
 ```
 
 This creates the folder, a `statement.md` stub, a `tests/` sample, Python
-`generator.py`/`solver.py` stubs, and appends the manifest entry. Fill in
-the logic, then validate:
+`generator.py`/`solver.py` stubs, and appends the manifest entry (pointed at
+those stubs). It is a fast way to start a question in Python; swap the
+manifest commands to `qtool` if you port it to Rust. Validate a solver by
+checking it reproduces every sample in `tests/`:
 
 ```
-# a solver must reproduce every sample in tests/
 for f in server/questions/Q6-*/tests/*.in; do
   diff <(python3 server/questions/Q6-*/solver.py < "$f") "${f%.in}.out" && echo "$f ok"
 done

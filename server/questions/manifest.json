@@ -7,8 +7,16 @@
     "points": 100,
     "mode": "numeric",
     "generated_cases": 100,
-    "generator": ["python3", "generator.py"],
-    "solver": ["python3", "solver.py"]
+    "generator": [
+      "../../target/release/qtool",
+      "q1",
+      "gen"
+    ],
+    "solver": [
+      "../../target/release/qtool",
+      "q1",
+      "solve"
+    ]
   },
   {
     "id": "q2",
@@ -18,8 +26,16 @@
     "points": 100,
     "mode": "exact",
     "generated_cases": 100,
-    "generator": ["python3", "generator.py"],
-    "solver": ["python3", "solver.py"]
+    "generator": [
+      "../../target/release/qtool",
+      "q2",
+      "gen"
+    ],
+    "solver": [
+      "../../target/release/qtool",
+      "q2",
+      "solve"
+    ]
   },
   {
     "id": "q3",
@@ -29,7 +45,15 @@
     "points": 100,
     "mode": "json",
     "generated_cases": 100,
-    "generator": ["python3", "generator.py"],
-    "solver": ["python3", "solver.py"]
+    "generator": [
+      "../../target/release/qtool",
+      "q3",
+      "gen"
+    ],
+    "solver": [
+      "../../target/release/qtool",
+      "q3",
+      "solve"
+    ]
   }
 ]

@@ -215,6 +215,10 @@ pub fn load(root: &PathBuf) -> anyhow::Result<Vec<Question>> {
     for entry in entries {
         let dir = root.join(&entry.dir);
         anyhow::ensure!(dir.is_dir(), "missing question folder {}", dir.display());
+        // Canonicalize so a question's generator/solver command can use a path
+        // relative to its folder (e.g. `../../target/release/qtool`) and still
+        // resolve no matter what working directory the server was launched in.
+        let dir = std::fs::canonicalize(&dir).unwrap_or(dir);
 
         let cases = load_cases(&dir)?;
         if entry.mode == Mode::Api {

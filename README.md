@@ -78,28 +78,36 @@ computer-science warm-ups:
 | q2 | FizzBuzz | `exact` | print 1..N with Fizz / Buzz / FizzBuzz |
 | q3 | Word Frequency Count | `json` | count each word, return a JSON object |
 
-A question is just a folder plus a manifest entry — you never touch Rust to add one:
+A question is just a folder plus a manifest entry — you never touch the judge to add one:
 
 ```json
 { "id": "q1", "dir": "Q1-maximum-subarray", "title": "Maximum Subarray Sum",
   "difficulty": "warm-up", "points": 100, "mode": "numeric",
-  "generated_cases": 100, "generator": ["python3", "generator.py"],
-  "solver": ["python3", "solver.py"] }
+  "generated_cases": 100,
+  "generator": ["../../target/release/qtool", "q1", "gen"],
+  "solver":    ["../../target/release/qtool", "q1", "solve"] }
 ```
 
 Each folder holds `statement.md` and `tests/NN.in` + `NN.out` (the legacy `enunciado.md` and
 `testes/` names still load). **Only the inputs ever leave the server.** A team downloads a ZIP
 with the statement, every input and a `run.sh` helper, runs their program once per input, and
 uploads the `.out` files. `extras` in the manifest is an explicit allowlist of extra files to
-ship — anything not listed stays server-side, so dropping a `solver.py` into a question folder
+ship — anything not listed stays server-side, so dropping a solution into a question folder
 cannot leak it into a competitor's pack.
 
 ### Policy is separated from mechanism
 
 The server is a generic **engine**: it knows how to run a program, seed it, judge its output,
 and cache the result. It knows nothing about any specific problem. Each question supplies its own
-**generator** and **solver** — a Python script, a compiled binary, anything executable — and the
-engine just runs them (see `server/questions/AUTHORING.md`). To scaffold a new one:
+**generator** and **solver** — any executable: a compiled binary, a Python script, anything the
+`generator`/`solver` command names — and the engine just runs them (see
+`server/questions/AUTHORING.md`).
+
+The three shipped questions use one small Rust binary, `qtool` (`server/src/bin/qtool.rs`), that
+`cargo build --release` produces next to the server. It dispatches on its arguments —
+`qtool <id> gen <seed>` prints an input, `qtool <id> solve` reads one and prints the expected
+output — which is why the manifest commands point at `../../target/release/qtool`. To sketch a
+question folder in another language you can still scaffold Python stubs:
 
 ```
 python3 tools/new_question.py q4 "Two Sum" --mode numeric
