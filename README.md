@@ -106,12 +106,16 @@ and cache the result. It knows nothing about any specific problem. Each question
 The three shipped questions use one small Rust binary, `qtool` (`server/src/bin/qtool.rs`), that
 `cargo build --release` produces next to the server. It dispatches on its arguments —
 `qtool <id> gen <seed>` prints an input, `qtool <id> solve` reads one and prints the expected
-output — which is why the manifest commands point at `../../target/release/qtool`. To sketch a
-question folder in another language you can still scaffold Python stubs:
+output — which is why the manifest commands point at `../../target/release/qtool`. To add a new
+question in one command — a folder, a manifest entry, and stub `gen`/`solve` functions plus match
+arms wired into `qtool.rs` — run:
 
 ```
 python3 tools/new_question.py q4 "Two Sum" --mode numeric
 ```
+
+then fill in the two Rust functions and `cargo build --release`. Pass `--lang python` to scaffold
+`generator.py`/`solver.py` stubs in the question folder instead.
 
 The contract is tiny. The generator is invoked as `<cmd> <seed>` (the same seed is also in
 `CASE_SEED`) and prints one test **input** to stdout; the solver reads an input on **stdin** and

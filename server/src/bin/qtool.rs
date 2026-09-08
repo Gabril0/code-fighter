@@ -209,9 +209,11 @@ fn q3_solve(input: &str) -> String {
 }
 
 // ---------------------------------------------------------------------------
+// SCAFFOLD:FUNCTIONS (new question generate/solve functions are inserted here)
+// ---------------------------------------------------------------------------
 
 fn usage() -> ! {
-    eprintln!("usage: qtool <q1|q2|q3> <gen|solve> [seed]");
+    eprintln!("usage: qtool <id> <gen|solve> [seed]");
     exit(2);
 }
 
@@ -239,6 +241,7 @@ fn main() {
                 "q1" => q1_generate(&mut rng),
                 "q2" => q2_generate(&mut rng),
                 "q3" => q3_generate(&mut rng),
+                // SCAFFOLD:GEN_ARMS
                 _ => usage(),
             };
             write_stdout(&case);
@@ -249,6 +252,7 @@ fn main() {
                 "q1" => q1_solve(&input),
                 "q2" => q2_solve(&input),
                 "q3" => q3_solve(&input),
+                // SCAFFOLD:SOLVE_ARMS
                 _ => usage(),
             };
             write_stdout(&answer);

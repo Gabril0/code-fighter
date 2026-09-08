@@ -97,17 +97,31 @@ input on stdin.
 ## Quick scaffold
 
 ```
-python3 tools/new_question.py q6 "My Question" --mode numeric
+python3 tools/new_question.py q4 "Two Sum" --mode numeric
 ```
 
-This creates the folder, a `statement.md` stub, a `tests/` sample, Python
-`generator.py`/`solver.py` stubs, and appends the manifest entry (pointed at
-those stubs). It is a fast way to start a question in Python; swap the
-manifest commands to `qtool` if you port it to Rust. Validate a solver by
-checking it reproduces every sample in `tests/`:
+By default this scaffolds the **Rust** path used by the shipped questions. It:
+
+- creates `server/questions/Q4-two-sum/` with a `statement.md` stub and a
+  `tests/` sample,
+- appends the manifest entry pointing at the `qtool` binary, and
+- inserts stub `q4_generate` / `q4_solve` functions **and** the two `match`
+  arms into `server/src/bin/qtool.rs`.
+
+Then fill in the two Rust functions, rebuild, and restart:
 
 ```
-for f in server/questions/Q6-*/tests/*.in; do
-  diff <(python3 server/questions/Q6-*/solver.py < "$f") "${f%.in}.out" && echo "$f ok"
+cd server && cargo build --release
+```
+
+Validate the solver by checking it reproduces every sample in `tests/`:
+
+```
+for f in server/questions/Q4-*/tests/*.in; do
+  diff <(server/target/release/qtool q4 solve < "$f") "${f%.in}.out" && echo "$f ok"
 done
 ```
+
+Prefer another language? Pass `--lang python` to drop
+`generator.py`/`solver.py` stubs in the question folder instead (the engine
+runs any executable named in the manifest).
