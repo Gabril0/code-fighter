@@ -111,6 +111,23 @@ function faceTexture(photo) {
 }
 
 class Watcher {
+  baseYaw: any;
+  bodyMaterial: any;
+  bubbleTime: any;
+  emote: any;
+  emoteTime: any;
+  faceMaterial: any;
+  faceTexture: any;
+  headMaterial: any;
+  id: any;
+  label: any;
+  labelData: any;
+  labelOffset: any;
+  message: any;
+  name: any;
+  root: any;
+  seat: any;
+
   constructor(person, seat, tint, overlay) {
     const { bodyGeometry: body, headGeometry: head, faceGeometry: face } = shared();
 
@@ -237,6 +254,14 @@ class Watcher {
 }
 
 export class Crowd {
+  focus: any;
+  overlay: any;
+  palette: any;
+  scene: any;
+  seats: any;
+  viewerId: any;
+  watchers: any;
+
   constructor(scene, seats, focus, overlay) {
     this.scene = scene;
     this.overlay = overlay;

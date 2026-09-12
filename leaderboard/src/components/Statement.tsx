@@ -48,7 +48,7 @@ export default function Statement({ markdown }) {
     const heading = line.match(/^(#{1,4})\s+(.*)$/);
     if (heading) {
       flushBullets();
-      const Tag = `h${Math.min(5, heading[1].length + 2)}`;
+      const Tag = `h${Math.min(5, heading[1].length + 2)}` as keyof JSX.IntrinsicElements;
       blocks.push(<Tag key={`h-${index}`}>{inline(heading[2], `h-${index}`)}</Tag>);
       return;
     }

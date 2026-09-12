@@ -25,8 +25,8 @@ export function setSpectator(spectator) {
   else localStorage.removeItem(SPECTATOR_KEY);
 }
 
-async function request(method, path, body, { auth = false } = {}) {
-  const headers = {};
+async function request(method: string, path: string, body?: any, { auth = false }: { auth?: boolean } = {}) {
+  const headers: Record<string, string> = {};
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (auth) {
     const token = getToken();
@@ -100,7 +100,7 @@ export const api = {
   summonGhost: () => request("POST", "/v1/ghost", undefined, { auth: true }),
   me: () => request("GET", "/v1/me", undefined, { auth: true }),
   updateMe: (patch) => request("PATCH", "/v1/me", patch, { auth: true }),
-  submit: (questionId, { outputs, apiUrl, teamId } = {}) =>
+  submit: (questionId: any, { outputs, apiUrl, teamId }: any = {}) =>
     request(
       "POST",
       "/v1/submissions",
@@ -114,11 +114,11 @@ export const api = {
     ),
   admin: {
     state: () => request("GET", "/v1/admin/state", undefined, { auth: true }),
-    createUser: (name, teamId) =>
+    createUser: (name: any, teamId?: any) =>
       request("POST", "/v1/admin/users", { name, team_id: teamId ?? null }, { auth: true }),
     patchUser: (id, patch) => request("PATCH", `/v1/admin/users/${id}`, patch, { auth: true }),
     deleteUser: (id) => request("DELETE", `/v1/admin/users/${id}`, undefined, { auth: true }),
-    createTeam: (name, color) => request("POST", "/v1/admin/teams", { name, color }, { auth: true }),
+    createTeam: (name: any, color?: any) => request("POST", "/v1/admin/teams", { name, color }, { auth: true }),
     patchTeam: (id, patch) => request("PATCH", `/v1/admin/teams/${id}`, patch, { auth: true }),
     deleteTeam: (id) => request("DELETE", `/v1/admin/teams/${id}`, undefined, { auth: true }),
     setLock: (locked) => request("POST", "/v1/admin/lock", { locked }, { auth: true }),

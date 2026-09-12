@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "re
 
 import { Ring } from "../three/ring";
 
-const Arena = forwardRef(function Arena({ leftFalls, rightFalls, members, winner, effects }, ref) {
+const Arena = forwardRef(function Arena({ leftFalls, rightFalls, members, winner, effects }: any, ref) {
   const containerRef = useRef(null);
   const ringRef = useRef(null);
   const [loading, setLoading] = useState(true);

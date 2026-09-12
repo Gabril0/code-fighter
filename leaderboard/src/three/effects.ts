@@ -346,6 +346,13 @@ export function buildFloorBounce(radius = 15) {
 }
 
 export class ImpactFx {
+  active: any;
+  flash: any;
+  flashLife: any;
+  flashPeak: any;
+  flashSpan: any;
+  scene: any;
+
   constructor(scene) {
     this.scene = scene;
     this.active = [];

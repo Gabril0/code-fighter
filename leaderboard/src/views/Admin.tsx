@@ -183,7 +183,7 @@ export default function Admin({ onSignedOut }) {
           key={state.title ?? "Code Fighter"}
           onSubmit={(e) => {
             e.preventDefault();
-            const value = e.target.elements.title.value.trim();
+            const value = (e.target as any).elements.title.value.trim();
             if (value && value !== state.title) {
               guard(() => api.admin.setTitle(value))();
             }

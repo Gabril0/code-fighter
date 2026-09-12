@@ -24,7 +24,7 @@ function Rung({ question, position, done, live, tries, color }) {
   return (
     <span
       className={classes.join(" ")}
-      style={done || live ? { "--team": color } : undefined}
+      style={done || live ? ({ "--team": color } as React.CSSProperties) : undefined}
       title={`${question.title}: ${tries === 0 ? "no attempts" : label}`}
     >
       <em className="rung-slot">Q{position}</em>
@@ -45,7 +45,7 @@ export default function TeamHud({ team, questions, leading, falls, outcome }) {
   const decided = Boolean(outcome);
 
   const solvedCount = Object.keys(team.solves ?? {}).length;
-  const totalTries = Object.values(team.attempts ?? {}).reduce((sum, count) => sum + count, 0);
+  const totalTries: number = Object.values<any>(team.attempts ?? {}).reduce((sum: number, count: any) => sum + count, 0);
   const firstUnsolved = questions.findIndex((question) => !team.solves?.[question.id]);
   const openThrough = firstUnsolved === -1 ? questions.length - 1 : firstUnsolved;
 

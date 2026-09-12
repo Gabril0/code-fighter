@@ -141,7 +141,7 @@ function loadRingModel(scene) {
       model.position.z = -anchorCentre.z * scale;
       model.position.y = FLOOR_Y - anchor.max.y * scale;
       model.traverse((child) => {
-        if (child.isMesh) {
+        if ((child as any).isMesh) {
           child.receiveShadow = true;
           child.castShadow = true;
         }
@@ -205,6 +205,52 @@ function fightSpot(side) {
 }
 
 export class Ring {
+  bloom: any;
+  camera: any;
+  cameraFocus: any;
+  cameraHome: any;
+  clock: any;
+  clockOffset: any;
+  colors: any;
+  composer: any;
+  confettiTimer: any;
+  container: any;
+  crowd: any;
+  crtPass: any;
+  disposed: any;
+  effects: any;
+  finaleTimer: any;
+  flashCamera: any;
+  flashQuad: any;
+  flashScene: any;
+  flatPass: any;
+  fx: any;
+  ghost: any;
+  ghostForcedUntil: any;
+  ghostLight: any;
+  ghostNoiseClock: any;
+  ghostVisible: any;
+  miiSource: any;
+  outcome: any;
+  overlay: any;
+  pendingRoster: any;
+  pixelPass: any;
+  ready: any;
+  renderer: any;
+  rosters: any;
+  scene: any;
+  screenFlashLife: any;
+  screenFlashPeak: any;
+  shake: any;
+  sides: any;
+  sparSide: any;
+  sparTimer: any;
+  spotRig: any;
+  trophy: any;
+  trophyClock: any;
+  trophyLight: any;
+  viewerId: any;
+
   constructor(container) {
     this.container = container;
     this.clock = new THREE.Clock();
@@ -954,7 +1000,7 @@ export class Ring {
     if (this.viewerId === id) return;
     this.viewerId = id;
     this.crowd.setViewer(id);
-    for (const state of Object.values(this.sides)) {
+    for (const state of Object.values<any>(this.sides)) {
       state.roster.forEach((fighter) => {
         tintOutline(fighter.pivot, fighter.memberId === id ? 0xffffff : 0x0a0a0c);
       });
@@ -962,7 +1008,7 @@ export class Ring {
   }
 
   fighterSays(memberId, message) {
-    for (const side of Object.values(this.sides)) {
+    for (const side of Object.values<any>(this.sides)) {
       const fighter = side.roster.find((one) => one.memberId === memberId);
       if (!fighter?.labelData) continue;
       sayOnLabel(fighter.labelData, message);
@@ -1081,7 +1127,7 @@ export class Ring {
         });
       }
     }
-    for (const side of Object.values(this.sides)) {
+    for (const side of Object.values<any>(this.sides)) {
       side.roster.forEach((fighter, index) => {
         fighter.update(delta);
         if (!fighter.labelData) return;
@@ -1118,7 +1164,7 @@ export class Ring {
     this.flashQuad?.geometry.dispose();
     this.flashQuad?.material.dispose();
 
-    for (const state of Object.values(this.sides)) {
+    for (const state of Object.values<any>(this.sides)) {
       state.roster.forEach((fighter) => {
         this.scene.remove(fighter.root);
         if (fighter.labelData) {

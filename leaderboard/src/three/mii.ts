@@ -99,6 +99,26 @@ function buildFaceTexture(member) {
 }
 
 export class Mii {
+  actions: any;
+  bones: any;
+  faceMaterial: any;
+  faceTexture: any;
+  fade: any;
+  gearMaterials: any;
+  materials: any;
+  mixer: any;
+  move: any;
+  opacity: any;
+  pivot: any;
+  ragdoll: any;
+  root: any;
+  side: any;
+  sideSign: any;
+  state: any;
+  strikePulse: any;
+  timers: any;
+  turn: any;
+
   constructor({ source, member, color, side, sideSign }) {
     this.side = side;
     this.sideSign = sideSign;

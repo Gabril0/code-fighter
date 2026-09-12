@@ -48,7 +48,7 @@ export function readImageAsSquareDataUrl(file) {
         );
         resolve(canvas.toDataURL("image/jpeg", QUALITY));
       };
-      image.src = reader.result;
+      image.src = reader.result as string;
     };
     reader.readAsDataURL(file);
   });

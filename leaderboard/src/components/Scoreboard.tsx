@@ -28,7 +28,7 @@ function Side({ team, side, leading, questions }) {
   if (leading) classes.push("scorebug-side--leading");
 
   return (
-    <div className={classes.join(" ")} style={{ "--team": team.color }}>
+    <div className={classes.join(" ")} style={{ "--team": team.color } as React.CSSProperties}>
       <div className="scorebug-plate">
         <span className="scorebug-team">{team.name}</span>
         <Dots team={team} questions={questions} />
