@@ -274,7 +274,7 @@ async fn send_with(
         "{method} {path} HTTP/1.1\r\n\
          Host: {host_header}\r\n\
          Accept: application/json\r\n\
-         User-Agent: hackaton-checker\r\n\
+         User-Agent: code-fighter\r\n\
          ngrok-skip-browser-warning: true\r\n\
          Connection: close\r\n",
     );

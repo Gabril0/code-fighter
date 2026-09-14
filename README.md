@@ -1,14 +1,15 @@
-# Hackaton 2/2026 — Boxing Leaderboard
+# Code Fighter
+
+A gamified programming-contest scoreboard. Teams solve coding problems; every correct solution
+throws a punch and knocks out one of the *other* team's fighters in a live boxing ring on the
+projector.
 
 Two pieces:
 
-- **`server/`** — Rust. Holds the answers, the people, the teams and the score. Nothing secret
-  ever reaches the browser.
-- **`leaderboard/`** — React + Three.js. A boxing ring on the projector, plus a login, a profile
-  page and an admin console.
-
-Solving a question lands a punch and knocks out one of the *other* team's fighters, who is
-carried out to rest while a teammate walks in.
+- **`server/`** — Rust. The judge, the store, and the API. It holds the answers, the people, the
+  teams and the score. Nothing secret ever reaches the browser.
+- **`leaderboard/`** — React + Three.js + TypeScript. The boxing ring for the projector, plus a
+  login, a profile page and an admin console.
 
 ## Run it
 
@@ -17,7 +18,7 @@ cd server && cargo run                          # http://localhost:8080
 cd leaderboard && npm install && npm run dev    # http://localhost:5173
 ```
 
-Point the frontend elsewhere with `VITE_API_URL=http://host:port npm run dev`.
+Point the frontend at a different backend with `VITE_API_URL=http://host:port npm run dev`.
 
 On first start the server prints an **admin login hash** and stores it in the database. It is
 reused on every later start, so grab it once:
@@ -29,7 +30,7 @@ reused on every later start, so grab it once:
   └──────────────────────────────────────────────┘
 ```
 
-Lost it? `sqlite3 server/data/hackaton.db "select token from users where role='admin'"`.
+Lost it? `sqlite3 server/data/code-fighter.db "select token from users where role='admin'"`.
 Delete the database to start a fresh event.
 
 ## The screens
@@ -46,15 +47,15 @@ paste it. No passwords, no email. First time someone signs in they land on their
 after that they go straight to the ring.
 
 **Profile** is deliberately tiny: a name and a picture. The organiser can set or replace anyone's
-picture from the admin console too, so nobody is blocked waiting on a teammate — whoever writes
-last wins. Pictures are cropped square and
-downscaled to 256×256 JPEG *in the browser* before upload — a phone photo lands as a few KB — so
-the state file stays small. The server rejects anything over ~300 KB.
+picture from the admin console too, so nobody is blocked waiting on a teammate. Pictures are
+cropped square and downscaled to 256×256 JPEG *in the browser* before upload — a phone photo lands
+as a few KB — so the state stays small. The server rejects anything over ~300 KB.
 
 ## The admin console
 
 Everything needed to run the event on one page, refreshing every 5s:
 
+- **Championship name** — set the title shown across the app.
 - **Teams** — create up to two, rename inline, set the colour with a picker, upload an icon,
   delete. The colour drives that team's fighters, ropes and HUD.
 - **People** — create a login and get their hash immediately (click to copy). Rename, assign or
@@ -68,9 +69,8 @@ Anyone can submit for their own team once assigned; the organiser can submit for
 
 ## The questions
 
-The three questions of the Code Fighter contest live in `server/questions/`, listed in
-`manifest.json` and loaded at boot. Restart to pick up changes. They are classic
-computer-science warm-ups:
+Questions live in `server/questions/`, are listed in `manifest.json`, and are loaded at boot
+(restart to pick up changes). The three shipped problems are classic computer-science warm-ups:
 
 | id | title | mode | idea |
 |---|---|---|---|
@@ -78,7 +78,19 @@ computer-science warm-ups:
 | q2 | FizzBuzz | `exact` | print 1..N with Fizz / Buzz / FizzBuzz |
 | q3 | Word Frequency Count | `json` | count each word, return a JSON object |
 
-A question is just a folder plus a manifest entry — you never touch the judge to add one:
+A question is a folder plus a manifest entry — **you never edit the judge to add one.** Each
+folder holds a `statement.md` and `tests/NN.in` + `NN.out` public cases:
+
+```
+server/questions/Q1-maximum-subarray/
+  statement.md          # the problem shown to teams
+  tests/
+    01.in  01.out       # the first two cases double as the statement's examples
+    02.in  02.out
+    ...
+```
+
+The manifest entry ties it together:
 
 ```json
 { "id": "q1", "dir": "Q1-maximum-subarray", "title": "Maximum Subarray Sum",
@@ -88,53 +100,70 @@ A question is just a folder plus a manifest entry — you never touch the judge 
   "solver":    ["../../target/release/qtool", "q1", "solve"] }
 ```
 
-Each folder holds `statement.md` and `tests/NN.in` + `NN.out` (the legacy `enunciado.md` and
-`testes/` names still load). **Only the inputs ever leave the server.** A team downloads a ZIP
-with the statement, every input and a `run.sh` helper, runs their program once per input, and
-uploads the `.out` files. `extras` in the manifest is an explicit allowlist of extra files to
-ship — anything not listed stays server-side, so dropping a solution into a question folder
-cannot leak it into a competitor's pack.
+**Only inputs ever leave the server.** A team downloads a ZIP with the statement, every input and
+a `run.sh` helper, runs their program once per input, and uploads the `.out` files. `extras` in
+the manifest is an explicit allowlist of extra files to ship — anything not listed stays
+server-side, so dropping a solution into a question folder cannot leak it into a competitor's pack.
 
-### Policy is separated from mechanism
+## Creating a new question
 
-The server is a generic **engine**: it knows how to run a program, seed it, judge its output,
-and cache the result. It knows nothing about any specific problem. Each question supplies its own
-**generator** and **solver** — any executable: a compiled binary, a Python script, anything the
-`generator`/`solver` command names — and the engine just runs them (see
-`server/questions/AUTHORING.md`).
+The engine is generic: it knows how to run a program, seed it, judge the output and cache the
+result — nothing about any specific problem. Each question supplies its own **generator** (builds
+a random input from a seed) and **solver** (computes the expected output for an input). The
+shipped questions implement both in one small Rust binary, `qtool` (`server/src/bin/qtool.rs`).
 
-The three shipped questions use one small Rust binary, `qtool` (`server/src/bin/qtool.rs`), that
-`cargo build --release` produces next to the server. It dispatches on its arguments —
-`qtool <id> gen <seed>` prints an input, `qtool <id> solve` reads one and prints the expected
-output — which is why the manifest commands point at `../../target/release/qtool`. To add a new
-question in one command — a folder, a manifest entry, and stub `gen`/`solve` functions plus match
-arms wired into `qtool.rs` — run:
+**One command scaffolds everything:**
 
-```
+```bash
 python3 tools/new_question.py q4 "Two Sum" --mode numeric
 ```
 
-then fill in the two Rust functions and `cargo build --release`. Pass `--lang python` to scaffold
-`generator.py`/`solver.py` stubs in the question folder instead.
+That will:
 
-The contract is tiny. The generator is invoked as `<cmd> <seed>` (the same seed is also in
-`CASE_SEED`) and prints one test **input** to stdout; the solver reads an input on **stdin** and
-prints the expected **output**. Both run with the question folder as their working directory, and
-both must be deterministic for a given seed.
+1. create `server/questions/Q4-two-sum/` with a `statement.md` stub and a sample `tests/01.in` +
+   `01.out`,
+2. append the manifest entry pointing at `qtool`, and
+3. insert stub `q4_generate` / `q4_solve` functions **and** the two `match` arms into
+   `server/src/bin/qtool.rs`.
+
+Then finish the question:
+
+1. **Write the statement** in `server/questions/Q4-two-sum/statement.md`.
+2. **Fill in the two Rust functions** in `qtool.rs`. `q4_generate(rng)` returns one input string;
+   `q4_solve(input)` returns the expected output. Both must be deterministic for a given seed —
+   use the provided `Rng` (SplitMix64) for all randomness.
+3. **Rebuild:** `cd server && cargo build --release` (this builds both the server and `qtool`).
+4. **Add public cases:** replace the sample `tests/*.in` / `*.out` with real ones (the first two
+   are shown in the statement). Verify your solver reproduces every one:
+   ```bash
+   for f in server/questions/Q4-*/tests/*.in; do
+     diff <(server/target/release/qtool q4 solve < "$f") "${f%.in}.out" && echo "$f ok"
+   done
+   ```
+5. **Restart the server.** The new question appears automatically.
+
+Prefer another language? Pass `--lang python` and the scaffolder drops `generator.py` /
+`solver.py` stubs in the question folder instead — the engine runs any executable named in the
+manifest, so a compiled binary, a script, anything works. The contract is tiny: the generator is
+invoked as `<cmd> <seed>` (the seed is also in the `CASE_SEED` env var) and prints one **input**
+to stdout; the solver reads an input on **stdin** and prints the expected **output**. Both run
+with the question folder as their working directory. See `server/questions/AUTHORING.md` for the
+full reference.
 
 ### Cases are generated per team
 
-Each question serves the curated cases from `tests/` first (the first two are the statement's
-examples, so everyone gets them), then **100 generated from a seed derived from the team id and
-the question id**. The engine runs the question's generator to build the input and its solver to
-compute the expected output, so no answer key is ever shipped.
+Each question serves its curated `tests/` cases first (the first two are the statement's
+examples, so everyone gets them), then **`generated_cases` inputs built from a seed derived from
+the team id and the question id**. The engine runs the generator to build each input and the
+solver to compute its expected output, so no answer key is ever shipped.
 
 The consequence that matters: the two teams get different inputs. Feeding one team's outputs to
-the other scores only the shared curated prefix. Generation is deterministic, so a team
-re-downloading its pack gets the same cases, and judging always reproduces the same cases the
-team was given. Because 100 cases mean 200 subprocess calls, each team's set is built once and
-**cached** — the first pack takes a few seconds, later ones are instant — and the cache is
-cleared on **Reset match**.
+the other scores only the shared curated prefix. Generation is deterministic, so re-downloading a
+pack yields the same cases and judging always reproduces them. Because 100 cases mean 200
+subprocess calls, each team's set is built once and **cached** — the first pack takes a few
+seconds, later ones are instant — and the cache is cleared on **Reset match**.
+
+### Judge modes
 
 `mode` picks how the answer is compared:
 
@@ -151,8 +180,7 @@ lands inside the window instead of on a rounding coin-flip.
 
 **Questions unlock in order.** A team sees the ones it has solved plus the next one; the rest
 answer `403` on the statement, the pack and the submission alike, so hiding them in the panel is
-presentation, not the control. The organiser bypasses it — a team stuck on q2 cannot skip ahead
-to q3.
+presentation, not the control. The organiser bypasses it — a team stuck on q2 cannot skip to q3.
 
 **A wrong submission costs nothing.** It bumps the attempt counter, ragdolls that team's fighter
 on every screen watching, and leaves the score untouched. Hidden cases never reveal the expected
@@ -182,9 +210,8 @@ no skeleton, so every pose is direct transforms computed per frame in `pose()`.
 
 **Member photos map onto the faces.** Each head carries its own canvas texture; the face is drawn
 into the front-facing region of an equirectangular layout, and an uploaded photo is clipped to a
-circle and composited over it. No photo leaves the drawn face. Fighters stand at a slight angle
-rather than in profile so the face stays visible to the room. A photo wrapped on a sphere
-stretches toward the edges — it reads clearly, but it is not a flat portrait.
+circle and composited over it. Fighters stand at a slight angle rather than in profile so the
+face stays visible to the room.
 
 ## API
 
@@ -204,64 +231,58 @@ stretches toward the edges — it reads clearly, but it is not a flat portrait.
 
 Admin routes return `403` for a participant token.
 
-## Deploying to Render
+## Deploying
 
-`render.yaml` describes both services — the Rust checker as a web service and the leaderboard
-as a static site. Point Render at the repo as a Blueprint and fill the four secrets it asks for:
+The backend is a single Rust binary that serves the API; the frontend is a static bundle
+(`cd leaderboard && npm run build` → `dist/`). Any host that can run a binary and serve static
+files works. The server binds `0.0.0.0:$PORT` when `PORT` is set (so it drops onto most PaaS
+hosts as-is); `BIND` still wins locally.
+
+Environment variables:
 
 | variable | on | what |
 |---|---|---|
-| `ADMIN_TOKEN` | checker | the organiser hash. Set it, do not let it be random — see below |
-| `SEED_JSON` | checker | the roster, pasted from `GET /v1/admin/export` |
-| `ALLOWED_ORIGINS` | checker | the static site's URL |
-| `VITE_API_URL` | leaderboard | the checker's URL |
-
-The server binds `0.0.0.0:$PORT` when Render sets it; `BIND` still wins locally, so nothing about
-running it on your own machine changes.
+| `ADMIN_TOKEN` | backend | pins the organiser hash so a restart cannot lock you out |
+| `SEED_JSON` (or `SEED_FILE`) | backend | a roster imported when the database comes up with no teams |
+| `ALLOWED_ORIGINS` | backend | the frontend's URL, for CORS |
+| `DB_FILE` | backend | database path (default `data/code-fighter.db`) |
+| `VITE_API_URL` | frontend | the backend's URL (set at build time) |
 
 ### Surviving an ephemeral disk
 
-A free instance has no persistent disk. Every deploy and every platform restart hands the process
-an empty filesystem, and with an empty database the server would mint a **new admin hash** and
-every participant's login would stop existing — mid-event.
-
-Two env vars remove that failure. `ADMIN_TOKEN` pins the organiser hash so a restart cannot lock
-you out. `SEED_JSON` (or `SEED_FILE`) carries a roster that is imported whenever the database
-comes up with no teams, so logins survive a wipe. Prefer `SEED_JSON`: the roster contains
-everyone's login hash, so it belongs in Render's environment rather than in the repository.
-
-Produce the seed once the match is set up:
+On a host with no persistent disk, every deploy hands the process an empty filesystem — and with
+an empty database the server would mint a **new admin hash** and every participant's login would
+stop existing, mid-event. Two env vars remove that: `ADMIN_TOKEN` pins the organiser hash, and
+`SEED_JSON` carries a roster that is imported whenever the database comes up with no teams. Prefer
+`SEED_JSON` (it contains everyone's login hash, so it belongs in the host's environment, not the
+repo). Produce the seed once the match is set up:
 
 ```bash
-curl -H "Authorization: Bearer $ADMIN_TOKEN" https://your-checker.onrender.com/v1/admin/export
+curl -H "Authorization: ******" https://your-backend.example.com/v1/admin/export
 ```
 
-The export is the full state — teams, people, solves and attempts — so re-seeding from a snapshot
-taken mid-event restores the scoreboard too, not just the logins. Import only runs when there are
-no teams, so it never overwrites a live match.
+The export is the full state — teams, people, solves and attempts — so re-seeding from a mid-event
+snapshot restores the scoreboard too, not just the logins. Import only runs when there are no
+teams, so it never overwrites a live match. Spectators and chat are not covered; they rebuild as
+people rejoin.
 
-What the seed does **not** cover: spectators and the chat, which are rebuilt as people rejoin.
+### Keeping a free instance awake
 
-### Keeping it awake
-
-A free instance sleeps after 15 minutes without traffic, and the first request after that takes
-close to a minute. Point any external pinger at `/health` every 10 minutes — cron-job.org and
-UptimeRobot both do it on a free plan. A ping keeps it warm, but it cannot prevent a redeploy or
-a platform restart, which is exactly what the seed is for.
+Free instances often sleep after ~15 minutes without traffic, and the first request after that is
+slow. Point any external pinger (cron-job.org, UptimeRobot) at `/health` every ~10 minutes. A
+ping keeps it warm but cannot prevent a redeploy or platform restart — that is what the seed is
+for.
 
 ## Things worth knowing
 
-**State lives on the server**, in a SQLite database at `server/data/hackaton.db`. That is what
-makes logins work: someone sets their picture on their own laptop and it appears on the
+**State lives on the server**, in a SQLite database at `server/data/code-fighter.db`. That is
+what makes logins work: someone sets their picture on their own laptop and it appears on the
 projector.
 
 Every write is a transaction, with WAL journalling and `synchronous=FULL`, so a crash or a pulled
 power cable cannot leave a half-written record — verified by `kill -9` mid-run with no loss. Back
 it up by copying the `.db`, `.db-wal` and `.db-shm` files together, or with
-`sqlite3 hackaton.db ".backup out.db"`.
-
-An older `data/state.json` from the JSON-file era is imported automatically on first start and
-kept as `state.json.imported`.
+`sqlite3 code-fighter.db ".backup out.db"`.
 
 **A solve is recorded once.** Re-submitting a solved question returns `{"correct": true}` without
 changing the score, so a double-click cannot double-count.

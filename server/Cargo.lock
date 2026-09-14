@@ -101,6 +101,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 
 [[package]]
+name = "code-fighter"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "axum",
+ "rand",
+ "rusqlite",
+ "rustls-native-certs",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-rustls",
+ "tower-http",
+ "webpki-roots",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -201,23 +218,6 @@ dependencies = [
  "cfg-if",
  "libc",
  "wasi",
-]
-
-[[package]]
-name = "hackaton-checker"
-version = "0.2.0"
-dependencies = [
- "anyhow",
- "axum",
- "rand",
- "rusqlite",
- "rustls-native-certs",
- "serde",
- "serde_json",
- "tokio",
- "tokio-rustls",
- "tower-http",
- "webpki-roots",
 ]
 
 [[package]]

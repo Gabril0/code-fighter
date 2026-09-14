@@ -2,9 +2,9 @@ use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use hackaton_checker::api::{self, Ctx};
-use hackaton_checker::questions;
-use hackaton_checker::store::Store;
+use code_fighter::api::{self, Ctx};
+use code_fighter::questions;
+use code_fighter::store::Store;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
         std::env::var("QUESTIONS_DIR").unwrap_or_else(|_| "questions".to_string()),
     );
     let state_path =
-        PathBuf::from(std::env::var("DB_FILE").unwrap_or_else(|_| "data/hackaton.db".to_string()));
+        PathBuf::from(std::env::var("DB_FILE").unwrap_or_else(|_| "data/code-fighter.db".to_string()));
     let bind: SocketAddr = match (std::env::var("BIND"), std::env::var("PORT")) {
         (Ok(bind), _) => bind.parse()?,
         (Err(_), Ok(port)) => format!("0.0.0.0:{port}").parse()?,

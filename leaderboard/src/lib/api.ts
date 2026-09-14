@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
-const TOKEN_KEY = "hackaton-token";
-const SPECTATOR_KEY = "hackaton-spectator";
+const TOKEN_KEY = "code-fighter-token";
+const SPECTATOR_KEY = "code-fighter-spectator";
 
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);

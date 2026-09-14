@@ -1,0 +1,16 @@
+# Language-stats tuning for GitHub Linguist.
+#
+# The core of this project is the Rust judge/server in `server/`. The following
+# paths are development/asset tooling and procedurally-generated rendering code,
+# not the primary application, so they are excluded from the repository language
+# breakdown (they still build and ship normally).
+
+# Auxiliary dev/build tooling: Blender model generators and helper scripts.
+tools/**            linguist-vendored
+
+# Procedural 3D character/ring engine rendered at runtime from Three.js
+# primitives (ported from the Blender asset pipeline).
+leaderboard/src/three/**  linguist-vendored
+
+# Generated lockfiles.
+leaderboard/package-lock.json  linguist-generated
