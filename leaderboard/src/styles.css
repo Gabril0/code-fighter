@@ -1320,7 +1320,7 @@ button.danger:hover:not(:disabled) {
 }
 
 .admin {
-  min-height: 100vh;
+  height: 100vh;
   padding: 2rem 2.5rem 4rem;
   display: flex;
   flex-direction: column;
