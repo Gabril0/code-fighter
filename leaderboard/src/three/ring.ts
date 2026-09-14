@@ -311,7 +311,7 @@ export class Ring {
     this.flatPass = new RenderPass(this.scene, this.camera);
     this.flatPass.enabled = false;
     this.composer.addPass(this.flatPass);
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.14, 0.5, 0.95);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.014, 0.5, 0.95);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
     this.crtPass = buildCrtPass();
