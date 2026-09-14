@@ -1,7 +1,9 @@
 # Code Fighter
 
 
+<p align="center">
 <img width="800" height="437" alt="ezgif-34b12721b38e5e3d" src="https://github.com/user-attachments/assets/3b7f418a-c500-4788-9133-e99921db1237" />
+</p>
 
 
 A gamified programming-contest scoreboard. Teams solve coding problems; every correct solution
@@ -50,7 +52,9 @@ Delete the database to start a fresh event.
 paste it. No passwords, no email. First time someone signs in they land on their profile page;
 after that they go straight to the ring.
 
+<p align="center">
 <img width="1904" height="1040" alt="image" src="https://github.com/user-attachments/assets/3210550a-f343-43c7-b521-c8c5990a78ae" />
+</p>
 
 **Profile** is deliberately tiny: a name and a picture. The organiser can set or replace anyone's
 picture from the admin console too, so nobody is blocked waiting on a teammate. Pictures are
@@ -60,7 +64,9 @@ as a few KB — so the state stays small. The server rejects anything over ~300 
 ## The admin console
 
 
+<p align="center">
 <img width="1904" height="1040" alt="image" src="https://github.com/user-attachments/assets/a346d3d6-7c0a-4695-b6c1-0b29e1819218" />
+</p>
 
 
 Everything needed to run the event on one page, refreshing every 5s:
@@ -79,7 +85,9 @@ Anyone can submit for their own team once assigned; the organiser can submit for
 
 ## The questions
 
+<p align="center">
 <img width="777" height="688" alt="image" src="https://github.com/user-attachments/assets/d3ae258c-94b6-415a-b59f-9add961e3671" />
+</p>
 
 
 Questions live in `server/questions/`, are listed in `manifest.json`, and are loaded at boot
